@@ -39,4 +39,8 @@ public class VeterinarianService {
     public void deleteById(UUID id) {
         veterinarianRepository.deleteById(id);
     }
+
+    public List<Veterinarian> findByExpertiseName(String name) {
+        return veterinarianRepository.findByExpertiseNameContaining(name);
+    }
 }

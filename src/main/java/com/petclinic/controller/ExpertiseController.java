@@ -70,4 +70,9 @@ public class ExpertiseController {
         response.put("message", "Expertise deleted successfully");
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/unused")
+    public ResponseEntity<List<Expertise>> getUnused() {
+        return ResponseEntity.ok(expertiseService.findUnused());
+    }
 }

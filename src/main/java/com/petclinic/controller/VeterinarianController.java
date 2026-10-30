@@ -70,4 +70,9 @@ public class VeterinarianController {
         response.put("message", "Veterinarian deleted successfully");
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/by-expertise")
+    public ResponseEntity<List<Veterinarian>> getByExpertise(@RequestParam String name) {
+        return ResponseEntity.ok(veterinarianService.findByExpertiseName(name));
+    }
 }

@@ -2,6 +2,7 @@ package com.petclinic.controller;
 
 import com.petclinic.model.Pet;
 import com.petclinic.service.PetService;
+import com.petclinic.service.VeterinarianService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class PetController {
 
     @Autowired
     private PetService petService;
+
+    @Autowired
+    private VeterinarianService veterinarianService;
 
     @PostMapping("/save")
     public ResponseEntity<Map<String, Object>> save(@RequestBody Pet pet) {
@@ -74,5 +78,15 @@ public class PetController {
     @GetMapping("/by-species")
     public ResponseEntity<List<Pet>> getBySpecies(@RequestParam String species) {
         return ResponseEntity.ok(petService.findBySpecies(species));
+    }
+
+    @GetMapping("/of-veterinarian/{veterinarianId}")
+    public ResponseEntity<?> getPetsOfVeterinarian(@PathVariable UUID veterinarianId) {
+        if (!veterinarianService.existsById(veterinarianId)) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "The veterinarian with that id does not exist");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(petService.findByVeterinarianId(veterinarianId));
     }
 }

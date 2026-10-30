@@ -43,4 +43,8 @@ public class PetService {
     public List<Pet> findBySpecies(String species) {
         return petRepository.findBySpeciesIgnoreCaseOrderByPetNameAsc(species);
     }
+
+    public List<Pet> findByVeterinarianId(UUID veterinarianId) {
+        return petRepository.findDistinctPetsByVeterinarianId(veterinarianId);
+    }
 }

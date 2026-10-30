@@ -39,4 +39,8 @@ public class ExamRoomService {
     public void deleteById(UUID id) {
         examRoomRepository.deleteById(id);
     }
+
+    public List<ExamRoom> findFreeRooms() {
+        return examRoomRepository.findFreeRooms();
+    }
 }

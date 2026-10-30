@@ -39,4 +39,8 @@ public class ExpertiseService {
     public void deleteById(UUID id) {
         expertiseRepository.deleteById(id);
     }
+
+    public List<Expertise> findUnused() {
+        return expertiseRepository.findUnusedExpertises();
+    }
 }

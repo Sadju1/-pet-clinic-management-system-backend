@@ -70,4 +70,9 @@ public class ExamRoomController {
         response.put("message", "ExamRoom deleted successfully");
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/free")
+    public ResponseEntity<List<ExamRoom>> getFreeRooms() {
+        return ResponseEntity.ok(examRoomService.findFreeRooms());
+    }
 }
