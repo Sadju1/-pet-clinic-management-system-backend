@@ -3,6 +3,7 @@ package com.petclinic.controller;
 import com.petclinic.model.Consultation;
 import com.petclinic.model.ConsultationStatus;
 import com.petclinic.service.ConsultationService;
+import com.petclinic.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ public class ConsultationController {
 
     @Autowired
     private ConsultationService consultationService;
+
+    @Autowired
+    private MedicalRecordService medicalRecordService;
 
     @PostMapping("/save")
     public ResponseEntity<Map<String, Object>> save(@RequestBody Consultation consultation) {
@@ -77,6 +81,10 @@ public class ConsultationController {
         if (!consultationService.existsById(id)) {
             response.put("message", "The consultation with that id does not exist");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        if (medicalRecordService.existsByConsultationId(id)) {
+            response.put("message", "That consultation has medical records, delete them first");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
         consultationService.deleteById(id);
         response.put("message", "Consultation deleted successfully");
