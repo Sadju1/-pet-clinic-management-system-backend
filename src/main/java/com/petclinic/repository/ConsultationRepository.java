@@ -21,6 +21,10 @@ public interface ConsultationRepository extends JpaRepository<Consultation, UUID
 
     boolean existsByVeterinarianIdAndVisitDateAndStatusNot(UUID veterinarianId, LocalDate visitDate, ConsultationStatus status);
 
+    long countByVisitDate(LocalDate visitDate);
+
+    long countByStatus(ConsultationStatus status);
+
     @Query("SELECT c.status, COUNT(c) FROM Consultation c GROUP BY c.status")
     List<Object[]> countConsultationsByStatus();
 
