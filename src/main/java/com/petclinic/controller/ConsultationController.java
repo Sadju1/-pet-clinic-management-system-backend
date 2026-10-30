@@ -24,8 +24,18 @@ public class ConsultationController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String, Object>> save(@RequestBody Consultation consultation) {
-        Consultation saved = consultationService.save(consultation);
         Map<String, Object> response = new HashMap<>();
+        if (consultationService.isDateInPast(consultation.getVisitDate())) {
+            response.put("message", "Consultation date cannot be in the past");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        if (consultation.getVeterinarian() != null && consultation.getVeterinarian().getId() != null
+                && consultationService.hasConflictingConsultation(consultation.getVeterinarian().getId(), consultation.getVisitDate())) {
+            response.put("message", "Veterinarian already has a consultation on that date");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
+        consultation.setStatus(ConsultationStatus.BOOKED);
+        Consultation saved = consultationService.save(consultation);
         response.put("message", "Consultation saved successfully");
         response.put("data", saved);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -83,5 +93,24 @@ public class ConsultationController {
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
         return ResponseEntity.ok(consultationService.findByVisitDateBetween(startDate, endDate));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Map<String, String>> updateStatus(@PathVariable UUID id, @RequestParam ConsultationStatus status) {
+        Map<String, String> response = new HashMap<>();
+        Optional<Consultation> existing = consultationService.findById(id);
+        if (existing.isEmpty()) {
+            response.put("message", "The consultation with that id does not exist");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        Consultation consultation = existing.get();
+        ConsultationStatus currentStatus = consultation.getStatus();
+        if (!consultationService.isValidStatusTransition(currentStatus, status)) {
+            response.put("message", "Cannot change status from " + currentStatus + " to " + status);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        consultationService.updateStatus(consultation, status);
+        response.put("message", "Consultation status updated successfully");
+        return ResponseEntity.ok(response);
     }
 }

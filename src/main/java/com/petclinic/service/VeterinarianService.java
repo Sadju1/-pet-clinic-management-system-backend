@@ -1,10 +1,12 @@
 package com.petclinic.service;
 
+import com.petclinic.model.Expertise;
 import com.petclinic.model.Veterinarian;
 import com.petclinic.repository.VeterinarianRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,5 +44,22 @@ public class VeterinarianService {
 
     public List<Veterinarian> findByExpertiseName(String name) {
         return veterinarianRepository.findByExpertiseNameContaining(name);
+    }
+
+    public boolean hasExpertise(Veterinarian veterinarian, UUID expertiseId) {
+        return veterinarian.getExpertises() != null
+                && veterinarian.getExpertises().stream().anyMatch(e -> e.getId().equals(expertiseId));
+    }
+
+    public Veterinarian addExpertise(Veterinarian veterinarian, Expertise expertise) {
+        if (veterinarian.getExpertises() == null) {
+            veterinarian.setExpertises(new ArrayList<>());
+        }
+        veterinarian.getExpertises().add(expertise);
+        return veterinarianRepository.save(veterinarian);
+    }
+
+    public boolean isExamRoomTakenByAnother(UUID examRoomId, UUID veterinarianId) {
+        return veterinarianRepository.existsByExamRoomIdAndIdNot(examRoomId, veterinarianId);
     }
 }

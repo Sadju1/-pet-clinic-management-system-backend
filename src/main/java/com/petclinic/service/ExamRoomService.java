@@ -43,4 +43,8 @@ public class ExamRoomService {
     public List<ExamRoom> findFreeRooms() {
         return examRoomRepository.findFreeRooms();
     }
+
+    public Optional<ExamRoom> findByRoomNumber(int roomNumber) {
+        return examRoomRepository.findByRoomNumber(roomNumber);
+    }
 }

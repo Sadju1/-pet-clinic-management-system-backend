@@ -14,4 +14,6 @@ public interface ConsultationRepository extends JpaRepository<Consultation, UUID
     List<Consultation> findByStatusOrderByVisitDateAsc(ConsultationStatus status);
 
     List<Consultation> findByVisitDateBetweenOrderByVisitDateAsc(LocalDate start, LocalDate end);
+
+    boolean existsByVeterinarianIdAndVisitDateAndStatusNot(UUID veterinarianId, LocalDate visitDate, ConsultationStatus status);
 }

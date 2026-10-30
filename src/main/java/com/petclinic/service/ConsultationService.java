@@ -31,6 +31,10 @@ public class ConsultationService {
 
     public Consultation update(UUID id, Consultation consultation) {
         consultation.setId(id);
+        ConsultationStatus existingStatus = consultationRepository.findById(id)
+                .map(Consultation::getStatus)
+                .orElse(consultation.getStatus());
+        consultation.setStatus(existingStatus);
         return consultationRepository.save(consultation);
     }
 
@@ -48,5 +52,29 @@ public class ConsultationService {
 
     public List<Consultation> findByVisitDateBetween(LocalDate start, LocalDate end) {
         return consultationRepository.findByVisitDateBetweenOrderByVisitDateAsc(start, end);
+    }
+
+    public boolean isDateInPast(LocalDate visitDate) {
+        return visitDate != null && visitDate.isBefore(LocalDate.now());
+    }
+
+    public boolean hasConflictingConsultation(UUID veterinarianId, LocalDate visitDate) {
+        return consultationRepository.existsByVeterinarianIdAndVisitDateAndStatusNot(
+                veterinarianId, visitDate, ConsultationStatus.MISSED);
+    }
+
+    public boolean isValidStatusTransition(ConsultationStatus from, ConsultationStatus to) {
+        if (from == ConsultationStatus.BOOKED) {
+            return to == ConsultationStatus.ARRIVED || to == ConsultationStatus.MISSED;
+        }
+        if (from == ConsultationStatus.ARRIVED) {
+            return to == ConsultationStatus.TREATED || to == ConsultationStatus.MISSED;
+        }
+        return false;
+    }
+
+    public Consultation updateStatus(Consultation consultation, ConsultationStatus newStatus) {
+        consultation.setStatus(newStatus);
+        return consultationRepository.save(consultation);
     }
 }

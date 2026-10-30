@@ -13,4 +13,6 @@ public interface VeterinarianRepository extends JpaRepository<Veterinarian, UUID
 
     @Query("SELECT DISTINCT v FROM Veterinarian v JOIN v.expertises e WHERE LOWER(e.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Veterinarian> findByExpertiseNameContaining(@Param("name") String name);
+
+    boolean existsByExamRoomIdAndIdNot(UUID examRoomId, UUID id);
 }
