@@ -5,6 +5,10 @@ import com.petclinic.model.ConsultationStatus;
 import com.petclinic.service.ConsultationService;
 import com.petclinic.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -135,5 +139,19 @@ public class ConsultationController {
         response.put("message", "Consultations for that day marked as MISSED successfully");
         response.put("updatedCount", updatedCount);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<Consultation>> getPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "visitDate,desc") String sort) {
+        String[] sortParams = sort.split(",");
+        String sortField = sortParams[0];
+        Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+        return ResponseEntity.ok(consultationService.findAll(pageable));
     }
 }
