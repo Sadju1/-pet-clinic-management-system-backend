@@ -121,4 +121,19 @@ public class ConsultationController {
         response.put("message", "Consultation status updated successfully");
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/stats/by-status")
+    public ResponseEntity<List<Object[]>> getStatsByStatus() {
+        return ResponseEntity.ok(consultationService.countConsultationsByStatus());
+    }
+
+    @PatchMapping("/cancel-day")
+    public ResponseEntity<Map<String, Object>> cancelDay(@RequestParam UUID veterinarianId, @RequestParam String date) {
+        LocalDate parsedDate = LocalDate.parse(date);
+        int updatedCount = consultationService.cancelConsultationsForDay(veterinarianId, parsedDate);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Consultations for that day marked as MISSED successfully");
+        response.put("updatedCount", updatedCount);
+        return ResponseEntity.ok(response);
+    }
 }

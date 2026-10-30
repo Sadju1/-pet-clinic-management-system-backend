@@ -77,4 +77,12 @@ public class ConsultationService {
         consultation.setStatus(newStatus);
         return consultationRepository.save(consultation);
     }
+
+    public List<Object[]> countConsultationsByStatus() {
+        return consultationRepository.countConsultationsByStatus();
+    }
+
+    public int cancelConsultationsForDay(UUID veterinarianId, LocalDate date) {
+        return consultationRepository.cancelConsultationsForDay(veterinarianId, date);
+    }
 }
