@@ -70,4 +70,9 @@ public class PetController {
         response.put("message", "Pet deleted successfully");
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/by-species")
+    public ResponseEntity<List<Pet>> getBySpecies(@RequestParam String species) {
+        return ResponseEntity.ok(petService.findBySpecies(species));
+    }
 }

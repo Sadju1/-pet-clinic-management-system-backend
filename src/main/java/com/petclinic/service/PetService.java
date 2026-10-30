@@ -39,4 +39,8 @@ public class PetService {
     public void deleteById(UUID id) {
         petRepository.deleteById(id);
     }
+
+    public List<Pet> findBySpecies(String species) {
+        return petRepository.findBySpeciesIgnoreCaseOrderByPetNameAsc(species);
+    }
 }

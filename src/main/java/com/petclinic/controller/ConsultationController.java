@@ -1,12 +1,14 @@
 package com.petclinic.controller;
 
 import com.petclinic.model.Consultation;
+import com.petclinic.model.ConsultationStatus;
 import com.petclinic.service.ConsultationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,5 +71,17 @@ public class ConsultationController {
         consultationService.deleteById(id);
         response.put("message", "Consultation deleted successfully");
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/by-status")
+    public ResponseEntity<List<Consultation>> getByStatus(@RequestParam ConsultationStatus status) {
+        return ResponseEntity.ok(consultationService.findByStatus(status));
+    }
+
+    @GetMapping("/between")
+    public ResponseEntity<List<Consultation>> getBetween(@RequestParam String start, @RequestParam String end) {
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = LocalDate.parse(end);
+        return ResponseEntity.ok(consultationService.findByVisitDateBetween(startDate, endDate));
     }
 }
