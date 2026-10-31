@@ -2,3 +2,8 @@
 .idea/
 .vscode/
 *.iml
+
+# Postman local workspace sync (tool-local state, not part of the deliverable)
+.postman/
+postman/
+Pet Clinic Management System - AUCA Midterm/
