@@ -1,0 +1,947 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-4789-9abc-def012345678",
+    "name": "Pet Clinic Management System - AUCA Midterm",
+    "description": "Official submission collection for the AUCA Pet Clinic Management System mid-term project. One primary request per graded requirement (A1, A2, B1-B3, C1-C4, D1-D4, E1-E3, F1-F2, BONUS-1, BONUS-2).\n\nIMPORTANT - READ BEFORE RUNNING:\n- Do NOT use Postman's \"Run collection\" feature to execute every request automatically. Several requests create temporary data that later requests depend on, and some combinations are intentionally unsafe to repeat blindly (see each request's description).\n- Real permanent seed UUIDs/tag numbers are used throughout via collection variables (see the Variables tab). No fake data is hardcoded except the deliberately-invalid {{fakeUuid}} used only to demonstrate 404 responses.\n- D1 creates a temporary consultation on a safe future date (2027-01-15) that does not collide with any seed consultation; D2 and F2 reuse that same temporary consultation. A2 creates a temporary veterinarian (as part of demonstrating the Part A CRUD contract) reused by D3 and D4; A1 itself is read-only, documenting the entity/relationship model. E1 attaches a new medical record to a real seed consultation (Max's TREATED visit) without modifying that consultation's own fields; E3 deletes it again as cleanup.\n- After demonstrating D4 and E1, run the documented cleanup steps (delete the temp veterinarian, delete the temp medical record) to return the database to its exact permanent-seed baseline (4 expertises, 4 exam rooms, 3 veterinarians, 5 pets, 10 consultations, 0 medical records).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "fakeUuid",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
+    },
+    {
+      "key": "surgeryExpertiseId",
+      "value": "0e5f3c70-57f7-4f09-bf1a-cad05ab8c118",
+      "type": "string"
+    },
+    {
+      "key": "dentistryExpertiseId",
+      "value": "d85b55d8-bc4e-4a01-adb9-9a689f1ba0de",
+      "type": "string"
+    },
+    {
+      "key": "dermatologyExpertiseId",
+      "value": "125f954c-6ede-4e51-b6d5-5438e1b8ce42",
+      "type": "string"
+    },
+    {
+      "key": "exoticAnimalsExpertiseId",
+      "value": "d4cdd1c2-69bd-49ee-a8b9-7bbb118f6baf",
+      "type": "string"
+    },
+    {
+      "key": "room1Id",
+      "value": "e7962a77-187b-42a1-814c-37794f60b0c2",
+      "type": "string"
+    },
+    {
+      "key": "room2Id",
+      "value": "4372a161-564b-4657-90a6-cfb74af89365",
+      "type": "string"
+    },
+    {
+      "key": "room3Id",
+      "value": "0fdc4086-cf85-4e7e-9046-1a7fba4f39ce",
+      "type": "string"
+    },
+    {
+      "key": "room4Id",
+      "value": "d8451144-e53a-42d3-a15c-5597a30a1f4c",
+      "type": "string"
+    },
+    {
+      "key": "jeanId",
+      "value": "bce5050e-67ef-46bf-9da0-dc0e6610e8e5",
+      "type": "string"
+    },
+    {
+      "key": "claireId",
+      "value": "14aad119-fd8c-4d65-a6cc-6d3235ce78d7",
+      "type": "string"
+    },
+    {
+      "key": "ericId",
+      "value": "d64d9073-9c72-4080-97bf-aef890415ceb",
+      "type": "string"
+    },
+    {
+      "key": "rexId",
+      "value": "b0cf8da2-5321-4e77-aa0c-a1726612748d",
+      "type": "string"
+    },
+    {
+      "key": "rexTag",
+      "value": "PET-0301",
+      "type": "string"
+    },
+    {
+      "key": "bellaId",
+      "value": "a9ea606f-b0c3-47eb-999c-a9c8e03c9be1",
+      "type": "string"
+    },
+    {
+      "key": "maxId",
+      "value": "631cd39a-ac75-4333-b83b-b677188d4492",
+      "type": "string"
+    },
+    {
+      "key": "maxTag",
+      "value": "PET-0310",
+      "type": "string"
+    },
+    {
+      "key": "treatedSeedConsultationId",
+      "value": "92b454d7-a103-46d6-bbb1-74c8cfb0b5ad",
+      "type": "string"
+    },
+    {
+      "key": "bookedSeedConsultationId",
+      "value": "8747a53d-c768-4d1c-b124-3d27a557af89",
+      "type": "string"
+    },
+    {
+      "key": "tempConsultationDate",
+      "value": "2027-01-15",
+      "type": "string"
+    },
+    {
+      "key": "tempVeterinarianId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tempConsultationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tempMedicalRecordId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "A1 - Entities and relationships",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/veterinarians/{{jeanId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "veterinarians",
+            "{{jeanId}}"
+          ]
+        },
+        "description": "PART A1 (10 marks) - Entities and relationships. This is a data-model/schema requirement, not a single CRUD action, so the primary request below is a read-only GET chosen because its response surfaces the entire relationship graph in one call; the rest of the model is documented here.\n\nFIVE ENTITIES (all ids are UUID, @GeneratedValue(strategy = GenerationType.UUID)):\n- Expertise: id, name. @ManyToMany(mappedBy=\"expertises\") List<Veterinarian> veterinarians, annotated @JsonIgnore so it is NEVER serialized - this is exactly what prevents infinite JSON recursion (Veterinarian -> Expertise -> Veterinarian -> ...).\n- ExamRoom: id, int roomNumber, String name. No relationships.\n- Veterinarian: id, firstName, lastName, licenseNumber. @ManyToOne ExamRoom via @JoinColumn(name=\"exam_room_id\", nullable=true). @ManyToMany Expertise - Veterinarian is the OWNING side via @JoinTable(name=\"veterinarian_expertise\", joinColumns=veterinarian_id, inverseJoinColumns=expertise_id).\n- Pet: id, petName, ownerName, tagNumber (@Column(unique=true)), species, ownerPhone. No relationships.\n- Consultation: id, visitDate (LocalDate), status (ConsultationStatus), reason. @ManyToOne Pet via @JoinColumn(name=\"pet_id\"). @ManyToOne Veterinarian via @JoinColumn(name=\"veterinarian_id\").\n\nENUM: ConsultationStatus { BOOKED, ARRIVED, TREATED, MISSED }, persisted via @Enumerated(EnumType.STRING) - the Postgres column stores the readable name (not an ordinal), with a CHECK constraint restricting it to these 4 values.\n\nPOSTGRESQL TABLES / FOREIGN KEYS / JOIN TABLE (auto-created by spring.jpa.hibernate.ddl-auto=update): expertise, exam_room, veterinarian (FK exam_room_id -> exam_room.id, nullable), pet, consultation (FK pet_id -> pet.id, FK veterinarian_id -> veterinarian.id), and the join table veterinarian_expertise (FK pair veterinarian_id -> veterinarian.id, expertise_id -> expertise.id) implementing the many-to-many relationship.\n\nSUCCESS DEMO (this request): GET seed veterinarian Jean by id. In one response this proves: (1) the ManyToOne Veterinarian->ExamRoom relationship (nested \"examRoom\" object with roomNumber/name), (2) the ManyToMany Veterinarian->Expertise relationship via the join table (nested \"expertises\" array), and (3) JSON recursion prevention - every object inside \"expertises\" contains only {id, name} with NO \"veterinarians\" key, proving @JsonIgnore stopped Expertise from serializing back into Veterinarian (the Test script asserts this directly).\n\nFURTHER VERIFICATION (optional, not a separate primary request): GET {{baseUrl}}/api/expertises/{{dermatologyExpertiseId}} independently confirms the same thing from the other direction - a plain Expertise response has no \"veterinarians\" field at all.\n\nERROR DEMO (404): Replace {{jeanId}} with {{fakeUuid}} -> HTTP 404 {\"message\":\"The veterinarian with that id does not exist\"}.\n\nPREREQUISITE / CLEANUP: None. Fully read-only and safe to repeat."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Veterinarian has an ExamRoom (ManyToOne relationship)\", function () {",
+              "    pm.expect(jsonData.examRoom).to.be.an('object');",
+              "    pm.expect(jsonData.examRoom.roomNumber).to.be.a('number');",
+              "});",
+              "pm.test(\"Veterinarian has Expertises (ManyToMany relationship)\", function () {",
+              "    pm.expect(jsonData.expertises).to.be.an('array');",
+              "});",
+              "pm.test(\"Expertise objects do not recurse back into veterinarians (JsonIgnore)\", function () {",
+              "    jsonData.expertises.forEach(function (e) {",
+              "        pm.expect(e).to.not.have.property('veterinarians');",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "A2 - CRUD for all five entities",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/veterinarians/save",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "veterinarians",
+            "save"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"TempDemo\",\n  \"lastName\": \"Vet\",\n  \"licenseNumber\": \"VET-POSTMAN-TEMP-001\"\n}"
+        },
+        "description": "PART A2 (5 marks) - CRUD for all five entities: POST /api/{path}/save, GET /api/{path}/all, GET /api/{path}/{id}, PUT /api/{path}/update/{id}, DELETE /api/{path}/delete/{id}, for path in [expertises, exam-rooms, veterinarians, pets, consultations].\n\nAll five entities share the exact same CRUD contract and response conventions:\n- POST /save -> HTTP 201, {\"message\":\"<Entity> saved successfully\", \"data\": {...}}\n- GET /all -> HTTP 200, JSON array of all records\n- GET /{id} -> HTTP 200 + the entity, OR HTTP 404 {\"message\":\"The <entity> with that id does not exist\"}\n- PUT /update/{id} -> HTTP 200, {\"message\":\"<Entity> updated successfully\",\"data\":{...}}, or HTTP 404 if missing\n- DELETE /delete/{id} -> HTTP 200 {\"message\":\"<Entity> deleted successfully\"}, or HTTP 404 if missing\n\nExact base paths: /api/expertises, /api/exam-rooms, /api/veterinarians, /api/pets, /api/consultations. (Consultation's /save and /update/{id} additionally carry the Part D1/D2 business-rule hardening documented separately under those requirement ids - this entry documents only the base Part A2 CRUD contract shared by all five entities.)\n\nONE SAFE PRIMARY REQUEST (per the one-request-per-requirement rule): POST /api/veterinarians/save, chosen because Veterinarian is the richest entity (it carries both relationship types) and because this same call doubles as the prerequisite temporary veterinarian reused by D3 and D4 below - its id is auto-captured into {{tempVeterinarianId}} by this request's Test script.\n\nSUCCESS DEMO: Expect HTTP 201 {\"message\":\"Veterinarian saved successfully\",\"data\":{...}}. To exercise the rest of the CRUD table yourself using this same safe temporary record, run in order: GET {{baseUrl}}/api/veterinarians/all, GET {{baseUrl}}/api/veterinarians/{{tempVeterinarianId}}, PUT {{baseUrl}}/api/veterinarians/update/{{tempVeterinarianId}} (any valid veterinarian JSON body), and eventually DELETE {{baseUrl}}/api/veterinarians/delete/{{tempVeterinarianId}} - all four follow the identical pattern described above for every other entity (expertises, exam-rooms, pets, consultations).\n\nERROR DEMO (404, applies identically to GET/PUT/DELETE by id across all five entities): GET {{baseUrl}}/api/veterinarians/{{fakeUuid}} -> HTTP 404 {\"message\":\"The veterinarian with that id does not exist\"}.\n\nPREREQUISITE / CLEANUP: None to run first. IMPORTANT: this is the SAME temporary veterinarian used by D3 (add expertise) and D4 (assign exam room) below - run those next to see the fuller entity lifecycle, then delete it via DELETE {{baseUrl}}/api/veterinarians/delete/{{tempVeterinarianId}} to restore Room 4 to the free-rooms list and leave zero extra veterinarians in the database. Never run this save-and-build flow against a seed veterinarian (Jean/Claire/Eric) - their expertise counts (2/1/0) and room assignments are permanent Step 0 invariants."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Response has created veterinarian id\", function () {",
+              "    pm.expect(jsonData.data.id).to.be.a('string');",
+              "});",
+              "pm.test(\"Success message returned\", function () {",
+              "    pm.expect(jsonData.message).to.eql('Veterinarian saved successfully');",
+              "});",
+              "pm.collectionVariables.set(\"tempVeterinarianId\", jsonData.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "B1 - Pets by species (derived query)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/pets/by-species?species=dog",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "pets",
+            "by-species"
+          ],
+          "query": [
+            {
+              "key": "species",
+              "value": "dog"
+            }
+          ]
+        },
+        "description": "PART B1 - Derived query: PetRepository.findBySpeciesIgnoreCaseOrderByPetNameAsc.\n\nSUCCESS DEMO: Case-insensitive match on species=\"dog\" returns the three seed dogs - Rex, Bella, and Max - sorted alphabetically by petName (Bella, Max, Rex). Expect HTTP 200. Try ?species=DOG or ?species=DoG as well to show the match is case-insensitive.\n\nERROR DEMO: This endpoint has no error/rejection path by design. An unmatched species (e.g. ?species=Hamster) is NOT an error - it correctly returns HTTP 200 with an empty array [], which is itself one of the graded requirements (empty list on no match).\n\nPREREQUISITE / CLEANUP: None. Fully read-only and safe to repeat."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Response is an array\", function () { pm.expect(jsonData).to.be.an('array'); });",
+              "pm.test(\"Results sorted alphabetically by petName\", function () {",
+              "    var names = jsonData.map(function (p) { return p.petName; });",
+              "    var sorted = names.slice().sort();",
+              "    pm.expect(names).to.eql(sorted);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "B2 - Consultations by status (derived query)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/consultations/by-status?status=BOOKED",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "consultations",
+            "by-status"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "BOOKED"
+            }
+          ]
+        },
+        "description": "PART B2 - Derived query: ConsultationRepository.findByStatusOrderByVisitDateAsc.\n\nSUCCESS DEMO: Returns every consultation with status=BOOKED, sorted by visitDate ascending. Against the pure seed baseline this returns 3 consultations (Whiskers 10-05, Max 10-15, Rex 11-05); the count will include any not-yet-cleaned-up temporary consultations from the D1/D2/F2 demo chain.\n\nERROR DEMO (400): Change status=BOOKED to an invalid value, e.g. status=NOTASTATUS. Spring's enum-conversion fails before reaching the controller, producing HTTP 400 Bad Request (confirmed during development).\n\nPREREQUISITE / CLEANUP: None. Fully read-only and safe to repeat."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"All results have status BOOKED\", function () {",
+              "    jsonData.forEach(function (c) { pm.expect(c.status).to.eql('BOOKED'); });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "B3 - Consultations between dates (derived query)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/consultations/between?start=2026-10-01&end=2026-10-31",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "consultations",
+            "between"
+          ],
+          "query": [
+            {
+              "key": "start",
+              "value": "2026-10-01"
+            },
+            {
+              "key": "end",
+              "value": "2026-10-31"
+            }
+          ]
+        },
+        "description": "PART B3 - Derived query: ConsultationRepository.findByVisitDateBetweenOrderByVisitDateAsc, dates parsed from String in the controller.\n\nSUCCESS DEMO: Returns all 6 seed consultations with visitDate inside October 2026 inclusive (10-05, 10-10, 10-15, 10-20 x2, 10-25), sorted ascending. Both boundary dates (2026-10-01 and 2026-10-31 if present) would be included - confirms inclusivity.\n\nERROR DEMO (500): Change start=2026-10-01 to start=notadate. LocalDate.parse() throws an uncaught DateTimeParseException - there is no global exception handler in this project for it, so Spring Boot's default error page returns HTTP 500 Internal Server Error (confirmed live; NOT a 400, which is worth knowing before a live demo).\n\nPREREQUISITE / CLEANUP: None. Fully read-only and safe to repeat."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"All visitDates are within the requested range\", function () {",
+              "    jsonData.forEach(function (c) {",
+              "        pm.expect(c.visitDate >= '2026-10-01' && c.visitDate <= '2026-10-31').to.be.true;",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C1 - Veterinarians by expertise (JPQL JOIN+LOWER+LIKE)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/veterinarians/by-expertise?name=derm",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "veterinarians",
+            "by-expertise"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "derm"
+            }
+          ]
+        },
+        "description": "PART C1 - JPQL @Query with collection JOIN, LOWER, and LIKE for partial case-insensitive matching (VeterinarianRepository.findByExpertiseNameContaining).\n\nSUCCESS DEMO: name=derm partially matches \"Dermatology\" and returns Claire Uwase exactly once (DISTINCT in the JPQL prevents duplicates even if a vet had multiple matching expertises). Try ?name=SURG to see Jean Mugisha returned instead.\n\nERROR DEMO: No rejection path by design - ?name=unknown correctly returns HTTP 200 with an empty array [], which is itself a graded requirement.\n\nPREREQUISITE / CLEANUP: None. Fully read-only and safe to repeat."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Claire Uwase is in the results\", function () {",
+              "    var names = jsonData.map(function (v) { return v.firstName + ' ' + v.lastName; });",
+              "    pm.expect(names).to.include('Claire Uwase');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C2 - Free exam rooms (JPQL NOT EXISTS)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/exam-rooms/free",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "exam-rooms",
+            "free"
+          ]
+        },
+        "description": "PART C2 - JPQL @Query with NOT EXISTS, ordered by roomNumber (ExamRoomRepository.findFreeRooms).\n\nSUCCESS DEMO (pure seed baseline): Returns only Room 4, since Jean/Claire/Eric permanently occupy Rooms 1/2/3.\n\nIMPORTANT ORDERING NOTE: If D4 has been demonstrated and NOT yet cleaned up, the temporary veterinarian will be occupying Room 4 at that moment, so this request will correctly return an EMPTY array instead. That is expected, correct behavior, not a bug - run DELETE {{baseUrl}}/api/veterinarians/delete/{{tempVeterinarianId}} (D4's cleanup step) to restore Room 4 to this list.\n\nERROR DEMO: No error path - this endpoint takes no parameters and always returns HTTP 200.\n\nPREREQUISITE / CLEANUP: None beyond the D4 interaction noted above."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Response is an array\", function () { pm.expect(jsonData).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C3 - Unused expertises (JPQL IS EMPTY)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/expertises/unused",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "expertises",
+            "unused"
+          ]
+        },
+        "description": "PART C3 - JPQL @Query using IS EMPTY on the veterinarians collection (ExpertiseRepository.findUnusedExpertises).\n\nSUCCESS DEMO: Always returns exactly \"Exotic Animals\", since no seed veterinarian (and no temporary veterinarian created by this collection's A2/D3 demo, which only attaches Surgery/Dentistry/Dermatology) ever holds it.\n\nERROR DEMO: No error path - this endpoint takes no parameters and always returns HTTP 200.\n\nPREREQUISITE / CLEANUP: None. Fully read-only and safe to repeat."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Exotic Animals is in the unused list\", function () {",
+              "    var names = jsonData.map(function (e) { return e.name; });",
+              "    pm.expect(names).to.include('Exotic Animals');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C4 - Pets of a veterinarian (JPQL DISTINCT)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/pets/of-veterinarian/{{jeanId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "pets",
+            "of-veterinarian",
+            "{{jeanId}}"
+          ]
+        },
+        "description": "PART C4 - JPQL @Query with DISTINCT and relationship path navigation through Consultation (PetRepository.findDistinctPetsByVeterinarianId).\n\nSUCCESS DEMO: Jean has consultations with Rex (twice, on 2026-10-20), Whiskers, and Max. Expect HTTP 200 with exactly 3 distinct pets - DISTINCT prevents Rex from appearing twice despite having two consultations with Jean.\n\nERROR DEMO (404): Replace {{jeanId}} with {{fakeUuid}}. Expect HTTP 404 with body {\"message\":\"The veterinarian with that id does not exist\"}.\n\nPREREQUISITE / CLEANUP: None. Fully read-only and safe to repeat."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Pets are distinct (no duplicate ids)\", function () {",
+              "    var ids = jsonData.map(function (p) { return p.id; });",
+              "    pm.expect(new Set(ids).size).to.eql(ids.length);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "D1 - Safe consultation creation (past-date + conflict + forced BOOKED)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/consultations/save",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "consultations",
+            "save"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"visitDate\": \"{{tempConsultationDate}}\",\n  \"status\": \"TREATED\",\n  \"reason\": \"Postman demo - D1 safe creation\",\n  \"pet\": { \"id\": \"{{rexId}}\" },\n  \"veterinarian\": { \"id\": \"{{jeanId}}\" }\n}"
+        },
+        "description": "PART D1 - Safe consultation creation business rules (ConsultationController.save).\n\nSUCCESS DEMO: Uses a safe future date ({{tempConsultationDate}} = 2027-01-15) that no seed consultation occupies, for Jean + Rex. The request body deliberately sets \"status\":\"TREATED\" to prove the server ALWAYS forces new consultations to BOOKED regardless of what the client sends - the Test script asserts data.status === 'BOOKED'. Expect HTTP 201. The created id is auto-captured into {{tempConsultationId}} for reuse by D2 and F2 below.\n\nERROR DEMO (400): Change visitDate to a past date, e.g. \"2020-01-01\" -> HTTP 400 {\"message\":\"Consultation date cannot be in the past\"}.\nERROR DEMO (409): Run this exact request a SECOND time without changing anything -> HTTP 409 {\"message\":\"Veterinarian already has a consultation on that date\"}, because the first (BOOKED) consultation is still active on {{tempConsultationDate}} for Jean.\n\nNOT SAFE TO BLINDLY REPEAT: the first run succeeds (201); every immediate repeat on the same date fails by design (409) until the existing one is deleted or transitioned to MISSED - that failure IS the 409 demo, not a bug.\n\nPREREQUISITE / CLEANUP: None to run first. After demonstrating D2 and F2 (which both operate on this same temporary consultation), delete it via DELETE {{baseUrl}}/api/consultations/delete/{{tempConsultationId}}."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Status is forced to BOOKED regardless of request body\", function () {",
+              "    pm.expect(jsonData.data.status).to.eql('BOOKED');",
+              "});",
+              "pm.collectionVariables.set(\"tempConsultationId\", jsonData.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "D2 - Consultation status transition (BOOKED to ARRIVED)",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/consultations/{{tempConsultationId}}/status?status=ARRIVED",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "consultations",
+            "{{tempConsultationId}}",
+            "status"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "ARRIVED"
+            }
+          ]
+        },
+        "description": "PART D2 - Consultation status transition state machine (ConsultationController.updateStatus).\n\nPREREQUISITE: Run D1 first to populate {{tempConsultationId}} with a fresh BOOKED consultation.\n\nSUCCESS DEMO: BOOKED -> ARRIVED is an allowed transition. Expect HTTP 200 {\"message\":\"Consultation status updated successfully\"}.\n\nERROR DEMO (400): Run this exact same request a second time immediately after. The consultation is now ARRIVED, and ARRIVED -> ARRIVED is not an allowed transition (only ARRIVED->TREATED or ARRIVED->MISSED are) -> HTTP 400 {\"message\":\"Cannot change status from ARRIVED to ARRIVED\"}.\nERROR DEMO (404): Replace {{tempConsultationId}} in the URL with {{fakeUuid}} -> HTTP 404 {\"message\":\"The consultation with that id does not exist\"}.\n\nNOT SAFE TO BLINDLY REPEAT with the same status value - the first call succeeds, the immediate repeat is the 400 demo, by design.\n\nPREREQUISITE / CLEANUP: Requires D1 to have run first in the same session (shares {{tempConsultationId}}). This consultation is later cleaned up after F2 (see D1's description)."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Success message returned\", function () {",
+              "    pm.expect(jsonData.message).to.eql('Consultation status updated successfully');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "D3 - Add expertise to veterinarian",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/veterinarians/{{tempVeterinarianId}}/expertises/{{dermatologyExpertiseId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "veterinarians",
+            "{{tempVeterinarianId}}",
+            "expertises",
+            "{{dermatologyExpertiseId}}"
+          ]
+        },
+        "description": "PART D3 - Add expertise to a veterinarian without replacing existing ones (VeterinarianController.addExpertise).\n\nPREREQUISITE: Run A2 first to populate {{tempVeterinarianId}} with a fresh veterinarian that has zero expertises.\n\nNEVER run this against a seed veterinarian id (jeanId/claireId/ericId) - Jean (2 expertises), Claire (1), and Eric (0) are permanent Step 0 invariants; adding to them would permanently corrupt the seed dataset.\n\nSUCCESS DEMO: Adds Dermatology to the temp veterinarian. Expect HTTP 200 {\"message\":\"Expertise added to the veterinarian\"}. Run again with {{surgeryExpertiseId}} or {{dentistryExpertiseId}} afterward to prove existing expertises are kept, not replaced.\n\nERROR DEMO (409): Run this exact same request a second time -> HTTP 409 {\"message\":\"The veterinarian already has that expertise\"}.\nERROR DEMO (404 x2): Replace {{tempVeterinarianId}} with {{fakeUuid}} (missing veterinarian), or replace {{dermatologyExpertiseId}} with {{fakeUuid}} (missing expertise) -> HTTP 404 with the corresponding exact message.\n\nNOT SAFE TO BLINDLY REPEAT with the same expertise id - the second run is the 409 demo, by design.\n\nPREREQUISITE / CLEANUP: Requires A2 to have run first. Cleanup is the same as A2/D4: delete {{tempVeterinarianId}} when done."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Success message returned\", function () {",
+              "    pm.expect(jsonData.message).to.eql('Expertise added to the veterinarian');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "D4 - Assign exam room to veterinarian",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/veterinarians/{{tempVeterinarianId}}/examroom?roomNumber=4",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "veterinarians",
+            "{{tempVeterinarianId}}",
+            "examroom"
+          ],
+          "query": [
+            {
+              "key": "roomNumber",
+              "value": "4"
+            }
+          ]
+        },
+        "description": "PART D4 - Assign an exam room, freeing any previous room (VeterinarianController.assignExamRoom).\n\nPREREQUISITE: Run A2 first to populate {{tempVeterinarianId}}. NEVER target a seed veterinarian - this would disturb Jean/Claire/Eric's permanent Room 1/2/3 assignments.\n\nSUCCESS DEMO: Assigns the temp veterinarian to Room 4 (the only free room in the seed dataset). Expect HTTP 200 {\"message\":\"Exam room changed successfully\"}. SIDE EFFECT: Room 4 will stop appearing in C2's free-rooms list until this veterinarian is deleted (see cleanup below) - this is expected, correct behavior demonstrating C2 and D4 are consistent.\n\nERROR DEMO (409): Change roomNumber=4 to roomNumber=1 (Jean's room), 2 (Claire's), or 3 (Eric's) -> HTTP 409 {\"message\":\"That exam room is taken by another veterinarian\"}.\nERROR DEMO (404 x2): Replace {{tempVeterinarianId}} with {{fakeUuid}}, or set roomNumber=9999 (nonexistent room) -> HTTP 404 with the corresponding exact message.\n\nPREREQUISITE / CLEANUP: Requires A2 to have run first. IMPORTANT CLEANUP: after demonstrating D3/D4, run DELETE {{baseUrl}}/api/veterinarians/delete/{{tempVeterinarianId}} to restore Room 4 to the free-rooms list (C2) and leave zero extra veterinarians."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Success message returned\", function () {",
+              "    pm.expect(jsonData.message).to.eql('Exam room changed successfully');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "E1 - Save medical record (TREATED consultation required)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/medical-records/save?consultationId={{treatedSeedConsultationId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "medical-records",
+            "save"
+          ],
+          "query": [
+            {
+              "key": "consultationId",
+              "value": "{{treatedSeedConsultationId}}"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"procedure\": \"Postman demo procedure\",\n  \"notes\": \"Created for Bonus/Part E Postman demonstration\",\n  \"doseMg\": 25\n}"
+        },
+        "description": "PART E1 - Save a medical record, only allowed for TREATED consultations (MedicalRecordController.save).\n\nUses the permanent seed consultation {{treatedSeedConsultationId}} (Max, 2026-11-20, status TREATED) because medical records require an existing TREATED consultation and none of this collection's temporary consultations reach TREATED (they stop at ARRIVED/MISSED in the D2/F2 demo chain). This ADDS a new, independent medical_record row - it does NOT modify any field on the seed consultation itself.\n\nSUCCESS DEMO: Expect HTTP 201 {\"message\":\"Medical record saved successfully\", \"data\": {...}}; recordedDate is forced to today's date regardless of the request body (verified by the Test script). The created id is auto-captured into {{tempMedicalRecordId}} for use by E2/E3.\n\nERROR DEMO (404): Change consultationId to {{fakeUuid}} -> HTTP 404 {\"message\":\"The consultation with that id does not exist\"}.\nERROR DEMO (400, completely safe): Change consultationId to {{bookedSeedConsultationId}} (Max, 2026-10-15, status BOOKED - a real seed consultation that is NOT TREATED) -> HTTP 400 {\"message\":\"Medical records are only for TREATED consultations\"}. This is safe to run freely since the request is rejected before any insert happens - no data is created or touched.\n\nPREREQUISITE / CLEANUP: None to run first. IMPORTANT CLEANUP: after demonstrating this and E2, run E3 (DELETE) to remove the created record and return medicalRecords count to 0."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"recordedDate is today\", function () {",
+              "    var today = new Date().toISOString().slice(0, 10);",
+              "    pm.expect(jsonData.data.recordedDate).to.eql(today);",
+              "});",
+              "pm.collectionVariables.set(\"tempMedicalRecordId\", jsonData.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "E2 - Medical records by pet tag number (JPQL path navigation)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/medical-records/pet/{{maxTag}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "medical-records",
+            "pet",
+            "{{maxTag}}"
+          ]
+        },
+        "description": "PART E2 - JPQL path navigation MedicalRecord -> Consultation -> Pet, ordered by recordedDate DESC (MedicalRecordRepository.findByPetTagNumber).\n\nSUCCESS DEMO: Read-only, always safe to repeat. If run BEFORE E1, returns HTTP 200 with an empty array [] (valid empty-result case - also a graded requirement). If run AFTER E1, returns the one record created for Max's TREATED consultation, with recordedDate = today.\n\nERROR DEMO: No error path - an unknown tag number also returns HTTP 200 with [].\n\nPREREQUISITE / CLEANUP: None required for this request itself; its result simply reflects whether E1 has been run yet."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Response is an array\", function () { pm.expect(jsonData).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "E3 - Delete medical record (and protect consultation)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/medical-records/delete/{{tempMedicalRecordId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "medical-records",
+            "delete",
+            "{{tempMedicalRecordId}}"
+          ]
+        },
+        "description": "PART E3 - Delete a medical record (MedicalRecordController.delete), plus the related consultation-protection rule added to ConsultationController.delete.\n\nPREREQUISITE: Run E1 first to populate {{tempMedicalRecordId}}.\n\nRELATED BEHAVIOR WORTH DEMONSTRATING FIRST: before running this request, try DELETE {{baseUrl}}/api/consultations/delete/{{treatedSeedConsultationId}} - it will correctly fail with HTTP 409 {\"message\":\"That consultation has medical records, delete them first\"} as long as the medical record from E1 still exists. Do NOT actually delete that consultation (it is permanent seed data) - only use this to observe the 409, then proceed with this request instead.\n\nSUCCESS DEMO: Deletes the medical record created in E1. Expect HTTP 200 {\"message\":\"Medical record deleted successfully\"}. This is also the required cleanup step for E1, returning medicalRecords count to 0.\n\nERROR DEMO (404): Run this exact same request a second time (or use {{fakeUuid}} in the URL) - the record no longer exists -> HTTP 404 {\"message\":\"The medical record with that id does not exist\"}.\n\nPREREQUISITE / CLEANUP: Requires E1 to have run first. This request IS the cleanup step - no further action needed afterward."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Success message returned\", function () {",
+              "    pm.expect(jsonData.message).to.eql('Medical record deleted successfully');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "F1 - Consultation statistics by status (JPQL GROUP BY + COUNT)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/consultations/stats/by-status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "consultations",
+            "stats",
+            "by-status"
+          ]
+        },
+        "description": "PART F1 - JPQL @Query with GROUP BY and COUNT, returning List<Object[]> (ConsultationRepository.countConsultationsByStatus).\n\nSUCCESS DEMO: Read-only, always safe to repeat. Against the pure seed baseline, returns one [status, count] pair per status present: TREATED=3, BOOKED=3, ARRIVED=2, MISSED=2 (order of rows is not guaranteed by GROUP BY, only the pairing is). Counts will shift slightly if D1-D4/F2's temporary consultation has not yet been cleaned up.\n\nERROR DEMO: No error path - this endpoint takes no parameters and always returns HTTP 200.\n\nPREREQUISITE / CLEANUP: None."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Response is an array of [status, count] pairs\", function () {",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    jsonData.forEach(function (row) { pm.expect(row).to.be.an('array').with.lengthOf(2); });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "F2 - Cancel consultations for a day (JPQL bulk UPDATE)",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/consultations/cancel-day?veterinarianId={{jeanId}}&date={{tempConsultationDate}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "consultations",
+            "cancel-day"
+          ],
+          "query": [
+            {
+              "key": "veterinarianId",
+              "value": "{{jeanId}}"
+            },
+            {
+              "key": "date",
+              "value": "{{tempConsultationDate}}"
+            }
+          ]
+        },
+        "description": "PART F2 - JPQL bulk @Modifying @Transactional UPDATE, excluding TREATED (ConsultationRepository.cancelConsultationsForDay).\n\nPREREQUISITE: Run D1 (and optionally D2) first so a temporary consultation exists for Jean on {{tempConsultationDate}} (2027-01-15).\n\nNEVER run this against a real seed date (e.g. date=2026-10-20) with veterinarianId={{jeanId}} - it would permanently flip real seed consultations to MISSED. {{tempConsultationDate}} is deliberately a date (2027-01-15) that no seed consultation occupies, so only the D1/D2 temporary consultation is ever affected.\n\nSUCCESS DEMO: Bulk-updates all of Jean's non-TREATED consultations on that date to MISSED. Expect HTTP 200 {\"message\":\"Consultations for that day marked as MISSED successfully\", \"updatedCount\": 1}.\n\nERROR DEMO: No 404/409 path by design - a nonexistent veterinarianId (try {{fakeUuid}}) simply matches zero rows and returns HTTP 200 with updatedCount:0 (not an error, by design). APPLICABLE ERROR: change date={{tempConsultationDate}} to date=notadate -> HTTP 500 Internal Server Error (confirmed live - LocalDate.parse() throws uncaught, no global exception handler exists for it).\n\nPREREQUISITE / CLEANUP: Requires D1 to have run first (shares {{tempConsultationId}}/{{tempConsultationDate}}). After this demo, delete the temporary consultation: DELETE {{baseUrl}}/api/consultations/delete/{{tempConsultationId}}."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Response has a numeric updatedCount\", function () {",
+              "    pm.expect(jsonData.updatedCount).to.be.a('number');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "BONUS-1 - Dashboard summary",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/dashboard/summary",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "dashboard",
+            "summary"
+          ]
+        },
+        "description": "BONUS 1 - Dashboard aggregate counts in a fixed key order (DashboardController.getSummary).\n\nSUCCESS DEMO: Read-only, always safe to repeat. Returns a single JSON object with exactly six keys in this order: pets, veterinarians, freeExamRooms, consultationsToday, booked, medicalRecords. Against the pure seed baseline: {\"pets\":5,\"veterinarians\":3,\"freeExamRooms\":1,\"consultationsToday\":0,\"booked\":3,\"medicalRecords\":0}. Values will reflect whatever temporary data exists at the moment this is called (e.g. if D4/E1 haven't been cleaned up yet, freeExamRooms/medicalRecords will differ).\n\nERROR DEMO: No error path - this endpoint takes no parameters and always returns HTTP 200.\n\nPREREQUISITE / CLEANUP: None."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"All six keys present in the required order\", function () {",
+              "    pm.expect(Object.keys(jsonData)).to.eql(['pets', 'veterinarians', 'freeExamRooms', 'consultationsToday', 'booked', 'medicalRecords']);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "BONUS-2 - Consultations pagination",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/consultations/page?page=0&size=5&sort=visitDate,desc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "consultations",
+            "page"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "5"
+            },
+            {
+              "key": "sort",
+              "value": "visitDate,desc"
+            }
+          ]
+        },
+        "description": "BONUS 2 - Spring Data Page<Consultation> pagination (ConsultationController.getPage, uses the inherited JpaRepository.findAll(Pageable) - no extra JPQL).\n\nSUCCESS DEMO: Read-only, always safe to repeat. Returns the 5 most recent consultations (newest visitDate first) plus standard Spring Page metadata: content, totalElements, totalPages, number, size, first, last, numberOfElements, empty. Against the pure seed baseline, totalElements=10 and totalPages=2. Also try page=1 (remaining 5 records, no overlap with page 0) and sort=visitDate,asc (ascending order) by editing the query params directly.\n\nERROR DEMO (500): Change sort=visitDate,desc to sort=bogusField,desc (unknown entity field), or page=0 to page=-1 (negative page number) -> both trigger HTTP 500 Internal Server Error (confirmed live - Spring Data throws an uncaught PropertyReferenceException / IllegalArgumentException respectively; there is no global exception handler for either in this project).\n\nPREREQUISITE / CLEANUP: None."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test(\"Standard Page metadata present\", function () {",
+              "    pm.expect(jsonData).to.have.property('content');",
+              "    pm.expect(jsonData).to.have.property('totalElements');",
+              "    pm.expect(jsonData).to.have.property('totalPages');",
+              "    pm.expect(jsonData).to.have.property('number');",
+              "    pm.expect(jsonData).to.have.property('size');",
+              "});",
+              "pm.test(\"Content sorted by visitDate descending\", function () {",
+              "    var dates = jsonData.content.map(function (c) { return c.visitDate; });",
+              "    var sorted = dates.slice().sort().reverse();",
+              "    pm.expect(dates).to.eql(sorted);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
